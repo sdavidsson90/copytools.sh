@@ -38,7 +38,7 @@ cpfp() {
   # If no arguments are given; stop and return error
   [ -z "$1" ] && echo "No target files provided!" && return 1
 
-  # Gather file paths and invalid form input
+  # Gather file paths and invalid input
   j=1
   for i in "$@"; do
     if [ -e "$i" ]; then
@@ -50,8 +50,8 @@ cpfp() {
     fi
   done
 
+  # Do the copy action and print copied filepaths
   if [ -n "${file_path[1]}" ]; then
-    # Do the copy action and print copied filepaths
     echo -n "${file_path[@]}" | copy &&
       echo -e "\e[1mCopied filepaths:\e[0m"
     for i in "${file_path[@]}"; do
@@ -80,6 +80,7 @@ cpfc() {
   # If no arguments are given; stop and return error
   [ -z "$1" ] && echo "No target files provided!" && return 1
 
+  # Gather file paths and invalid input
   j=1
   for i in "$@"; do
     if [ -e "$i" ]; then
@@ -123,10 +124,11 @@ pf() {
 
   # Create array from clipboard items
   items=($(pbpaste))
-  j=1
 
+  # Gather valid filepaths from clipboard
   # Clipboard items may filepaths with spaces
   # These need to be reassembled based on a set of rules
+  j=1
   for i in "${items[@]}"; do
     if [[ -e "$i" ]]; then
       if [[ "$i" = '/'* ]]; then
@@ -241,10 +243,11 @@ pf() {
 mvf() {
   # Create array from clipboard items
   items=($(pbpaste))
-  j=1
 
+  # Gather valid filepaths from clipboard
   # Clipboard items may filepaths with spaces
   # These need to be reassembled based on a set of rules
+  j=1
   for i in "${items[@]}"; do
     if [[ -e "$i" ]]; then
       if [[ "$i" = '/'* ]]; then
