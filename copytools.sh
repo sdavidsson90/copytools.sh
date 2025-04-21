@@ -42,16 +42,17 @@ cpfp() {
   j=1
   for i in "$@"; do
     if [ -e "$i" ]; then
-      file_path[$j]+="$(realpath $i)"
+      file_path[$j]=$(realpath "$i")
       ((j++))
     else
       invalid+="$i"
+      invalid+=' '
     fi
   done
 
-  # Do the copy action and print copied filepaths
-  if [ -n "$file_path" ]; then
-    echo -n "$file_path" | copy &&
+  if [ -n "${file_path[1]}" ]; then
+    # Do the copy action and print copied filepaths
+    echo -n "${file_path[@]}" | copy &&
       echo -e "\e[1mCopied filepaths:\e[0m"
     for i in "${file_path[@]}"; do
       echo "$i"
@@ -82,9 +83,8 @@ cpfc() {
   j=1
   for i in "$@"; do
     if [ -e "$i" ]; then
-      file_path[$j]+="$(realpath $i)"
+      file_path[$j]=$(realpath "$i")
       file_contents+=$(cat "$i")
-      file_contents+=$'\n'
       ((j++))
     else
       invalid+="$i"
@@ -93,7 +93,7 @@ cpfc() {
   done
 
   # Do the copy action and print paths of copied files
-  if [[ -n $file_path ]]; then
+  if [ -n "${file_path[1]}" ]; then
     printf "%s" "$file_contents" | copy
     echo -e "\e[1mCopied file contents of:\e[0m"
     for i in "${file_path[@]}"; do
@@ -126,7 +126,7 @@ pf() {
   j=1
 
   # Clipboard items may filepaths with spaces
-  # We will test this:
+  # These need to be reassembled based on a set of rules
   for i in "${items[@]}"; do
     if [[ -e "$i" ]]; then
       if [[ "$i" = '/'* ]]; then
@@ -168,7 +168,7 @@ pf() {
   done
 
   # Print header if clipboard contains any valid filepath
-  if [[ -n "$valid" ]]; then
+  if [[ -n "${valid[1]}" ]]; then
     echo -e "\e[1mPasting files:\e[0m"
   else
     echo "Could not find any valid filepaths in clipboard!"
@@ -244,7 +244,7 @@ mvf() {
   j=1
 
   # Clipboard items may filepaths with spaces
-  # We will test this:
+  # These need to be reassembled based on a set of rules
   for i in "${items[@]}"; do
     if [[ -e "$i" ]]; then
       if [[ "$i" = '/'* ]]; then
@@ -286,7 +286,7 @@ mvf() {
   done
 
   # Print header if clipboard contains any valid filepath
-  if [[ -n "$valid" ]]; then
+  if [[ -n "${valid[1]}" ]]; then
     echo -e "\e[1mMoving files:\e[0m"
   else
     echo "Could not find any valid filepaths in clipboard!"
