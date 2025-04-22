@@ -123,7 +123,7 @@ alias p=paste
 pf() {
 
   # Create array from clipboard items
-  items=($(pbpaste))
+  items=($(paste))
 
   # Gather valid filepaths from clipboard
   # Clipboard items may filepaths with spaces
@@ -242,7 +242,7 @@ pf() {
 # Move file(s) to current directory
 mvf() {
   # Create array from clipboard items
-  items=($(pbpaste))
+  items=($(paste))
 
   # Gather valid filepaths from clipboard
   # Clipboard items may filepaths with spaces
