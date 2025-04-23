@@ -26,6 +26,10 @@ fi
 # ==========================================
 # Copy working directory
 cpwd() {
+
+  # Clear clipboard
+  printf "%s" "" | copy
+
   echo "$PWD/" | copy
   echo -e "\e[1mCopied working directory:\e[0m"
   paste
@@ -49,6 +53,9 @@ cpfp() {
       invalid+=' '
     fi
   done
+
+  # Clear clipboard
+  printf "%s" "" | copy
 
   # Do the copy action and print copied filepaths
   if [ -n "${file_path[1]}" ]; then
@@ -92,6 +99,9 @@ cpfc() {
       invalid+=$'\n'
     fi
   done
+
+  # Clear clipboard
+  printf "%s" "" | copy
 
   # Do the copy action and print paths of copied files
   if [ -n "${file_path[1]}" ]; then
