@@ -92,7 +92,8 @@ cpfc() {
   for i in "$@"; do
     if [ -e "$i" ]; then
       file_path[$j]=$(realpath "$i")
-      file_contents+=$(cat "$i")
+      file_contents+=$(<"$i")
+      file_contents+=$'\n'
       ((j++))
     else
       invalid+="$i"
