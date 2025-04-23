@@ -126,7 +126,7 @@ pf() {
   items=($(paste))
 
   # Gather valid filepaths from clipboard
-  # Clipboard items may filepaths with spaces
+  # Clipboard items may contain file paths with spaces
   # These need to be reassembled based on a set of rules
   j=1
   for i in "${items[@]}"; do
@@ -219,8 +219,14 @@ pf() {
         ;;
       esac
 
+      # Does the print end in a double newline?
+      remove_newline=true
+
     elif [[ ! -e $(basename "$i") ]]; then
       cp -r "$i" . 2>/dev/null && echo " [✓]" || echo " [x]"
+
+      # Does the print end in a double newline?
+      remove_newline=false
     fi
 
     unset response
@@ -233,6 +239,12 @@ pf() {
     for i in ${invalid[@]}; do
       echo "$invalid"
     done
+    remove_newline=true
+  fi
+
+  # Remove superfluous newline
+  if [[ $remove_newline = true ]]; then
+    echo -en "\033[1A\033[2K"
   fi
 
   unset items j valid possibly invalid
@@ -241,11 +253,12 @@ pf() {
 # ==========================================
 # Move file(s) to current directory
 mvf() {
+
   # Create array from clipboard items
   items=($(paste))
 
   # Gather valid filepaths from clipboard
-  # Clipboard items may filepaths with spaces
+  # Clipboard items may contain file paths with spaces
   # These need to be reassembled based on a set of rules
   j=1
   for i in "${items[@]}"; do
@@ -338,8 +351,14 @@ mvf() {
         ;;
       esac
 
+      # Does the print end in a double newline?
+      remove_newline=true
+
     elif [[ ! -e $(basename "$i") ]]; then
       cp -r "$i" . 2>/dev/null && rm -rf "$i" && echo " [✓]" || echo " [x]"
+
+      # Does the print end in a double newline?
+      remove_newline=false
     fi
 
     unset response
@@ -352,6 +371,12 @@ mvf() {
     for i in ${invalid[@]}; do
       echo "$invalid"
     done
+    remove_newline=true
+  fi
+
+  # Remove superfluous newline
+  if [[ $remove_newline = true ]]; then
+    echo -en "\033[1A\033[2K"
   fi
 
   unset items j valid possibly invalid
