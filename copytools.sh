@@ -28,10 +28,12 @@ fi
 cpwd() {
 
   # Clear clipboard
-  printf "%s" "" | copy
+  printf '' | copy
 
-  echo "$PWD/" | copy
-  echo -e "\e[1mCopied working directory:\e[0m"
+  # Do the copy action
+  printf "$PWD/" | copy &&
+    # Print confirmation
+    echo -e "\e[1mCopied working directory:\e[0m"
   paste
 }
 
@@ -50,19 +52,19 @@ cpfp() {
       ((j++))
     else
       invalid+="$i"
-      invalid+=' '
+      invalid+=$'\n'
     fi
   done
 
   # Clear clipboard
-  printf "%s" "" | copy
+  printf '' | copy
 
   # Do the copy action and print copied filepaths
   if [ -n "${file_path[1]}" ]; then
-    echo -n "${file_path[@]}" | copy &&
+    printf "%s " "${file_path[@]}" | copy &&
       echo -e "\e[1mCopied filepaths:\e[0m"
     for i in "${file_path[@]}"; do
-      echo "$i"
+      printf "%s\n" "$i"
     done
 
     # If both valid and invalid input are to be printed; print newline before invalid
@@ -73,7 +75,7 @@ cpfp() {
   if [ -n "$invalid" ]; then
     echo -e "\e[1mInvalid input:\e[0m"
     for i in "${invalid[@]}"; do
-      echo "$invalid"
+      printf "%s\n" "$invalid"
     done
   fi
 
@@ -90,26 +92,33 @@ cpfc() {
   # Gather file paths and invalid input
   j=1
   for i in "$@"; do
-    if [ -e "$i" ]; then
+    if [ -f "$i" ]; then
       file_path[$j]=$(realpath "$i")
       file_contents+=$(<"$i")
-      file_contents+=$'\n'
+      if [[ $j != "$#" ]]; then
+        file_contents+=$'\n'
+      fi
       ((j++))
     else
-      invalid+="$i"
-      invalid+=$'\n'
+      if [ -d $i ]; then
+        invalid+="$i/"
+        invalid+=$'\n'
+      else
+        invalid+="$i"
+        invalid+=$'\n'
+      fi
     fi
   done
 
   # Clear clipboard
-  printf "%s" "" | copy
+  printf '' | copy
 
   # Do the copy action and print paths of copied files
   if [ -n "${file_path[1]}" ]; then
     printf "%s" "$file_contents" | copy
     echo -e "\e[1mCopied file contents of:\e[0m"
     for i in "${file_path[@]}"; do
-      echo "$i"
+      printf "%s \n" "$i"
     done
 
     # If invalid input was also given; print newline for sepearation
@@ -231,13 +240,13 @@ pf() {
       esac
 
       # Does the print end in a double newline?
-      remove_newline=true
+      rm_newline=true
 
     elif [[ ! -e $(basename "$i") ]]; then
       cp -r "$i" . 2>/dev/null && echo " [✓]" || echo " [x]"
 
       # Does the print end in a double newline?
-      remove_newline=false
+      rm_newline=false
     fi
 
     unset response
@@ -250,11 +259,11 @@ pf() {
     for i in ${invalid[@]}; do
       echo "$invalid"
     done
-    remove_newline=true
+    rm_newline=true
   fi
 
   # Remove superfluous newline
-  if [[ $remove_newline = true ]]; then
+  if [[ $rm_newline = true ]]; then
     echo -en "\033[1A\033[2K"
   fi
 
@@ -363,13 +372,13 @@ mvf() {
       esac
 
       # Does the print end in a double newline?
-      remove_newline=true
+      rm_newline=true
 
     elif [[ ! -e $(basename "$i") ]]; then
       cp -r "$i" . 2>/dev/null && rm -rf "$i" && echo " [✓]" || echo " [x]"
 
       # Does the print end in a double newline?
-      remove_newline=false
+      rm_newline=false
     fi
 
     unset response
@@ -382,11 +391,11 @@ mvf() {
     for i in ${invalid[@]}; do
       echo "$invalid"
     done
-    remove_newline=true
+    rm_newline=true
   fi
 
   # Remove superfluous newline
-  if [[ $remove_newline = true ]]; then
+  if [[ $rm_newline = true ]]; then
     echo -en "\033[1A\033[2K"
   fi
 
